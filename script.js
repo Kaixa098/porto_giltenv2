@@ -1,3 +1,111 @@
+// --- TRANSLATION DICTIONARY ---
+const translations = {
+    id: {
+        "nav-home": "Home",
+        "nav-about": "About",
+        "nav-projects": "Projects",
+        "nav-achievements": "Prestasi",
+        "nav-hobbies": "Hobbies",
+        "nav-contact": "Contact",
+        "hero-tag": "HELLO WORLD, I AM",
+        "hero-sub": "Fullstack Web Developer (Frontend & Backend Enthusiast). Building modern & scalable web applications.",
+        "hero-btn": "Explore My Work",
+        "about-title": "About <span>Me</span>",
+        "about-p1": "Halo! Nama saya <strong class=\"highlight\">Gilten Rexcia</strong>. Saya adalah seorang <strong class=\"highlight\">Fullstack Web Developer</strong> yang memiliki passion mendalam dalam membangun aplikasi web utuh dari sisi Frontend hingga Backend.",
+        "about-p2": "Saat ini saya berusia <strong>17 tahun</strong>, berjenis kelamin <strong>Laki-laki</strong>.",
+        "about-p3": "Saya terbiasa merancang antarmuka yang modern, responsif, serta mengelola logika server dan basis data secara efisien.",
+        "tech-all": "All",
+        "projects-title": "Featured <span>Projects</span>",
+        "proj-1-desc": "Aplikasi web interaktif dengan sistem autentikasi dan manajemen data real-time.",
+        "proj-2-desc": "Backend API berkinerja tinggi untuk pengelolaan data terintegrasi database.",
+        "proj-3-desc": "Website profil perusahaan interaktif dengan tampilan modern dan animasi halus.",
+        "btn-visit": "<i class=\"fas fa-external-link-alt\"></i> Visit Website",
+        "achievements-title": "My <span>Achievements</span>",
+        "ach-1-title": "Juara 1 Bahasa Inggris",
+        "ach-1-desc": "Kompetisi tingkat sekolah.",
+        "ach-2-desc": "Prestasi akademik unggulan.",
+        "hobbies-title": "My <span>Hobbies</span>",
+        "hobby-1-title": "Berenang",
+        "hobby-1-desc": "Menjaga stamina tubuh.",
+        "hobby-2-desc": "Strategi & Refreshing.",
+        "hobby-3-desc": "Melatih reflek & fokus.",
+        "hobby-4-desc": "Akurasi & Konsentrasi.",
+        "contact-title": "Get In <span>Touch</span>",
+        "email-label": "Email (Klik untuk salin)",
+        "wa-label": "WhatsApp (Klik untuk salin)"
+    },
+    en: {
+        "nav-home": "Home",
+        "nav-about": "About",
+        "nav-projects": "Projects",
+        "nav-achievements": "Achievements",
+        "nav-hobbies": "Hobbies",
+        "nav-contact": "Contact",
+        "hero-tag": "HELLO WORLD, I AM",
+        "hero-sub": "Fullstack Web Developer (Frontend & Backend Enthusiast). Building modern & scalable web applications.",
+        "hero-btn": "Explore My Work",
+        "about-title": "About <span>Me</span>",
+        "about-p1": "Hello! My name is <strong class=\"highlight\">Gilten Rexcia</strong>. I am a <strong class=\"highlight\">Fullstack Web Developer</strong> with a deep passion for building complete web applications from Frontend to Backend.",
+        "about-p2": "I am currently <strong>17 years old</strong>, male.",
+        "about-p3": "I am used to designing modern, responsive user interfaces, and managing server-side logic and databases efficiently.",
+        "tech-all": "All",
+        "projects-title": "Featured <span>Projects</span>",
+        "proj-1-desc": "Interactive web application featuring user authentication and real-time data management.",
+        "proj-2-desc": "High-performance backend API service integrated with efficient database management.",
+        "proj-3-desc": "Interactive company profile website with a sleek modern design and smooth animations.",
+        "btn-visit": "<i class=\"fas fa-external-link-alt\"></i> Visit Website",
+        "achievements-title": "My <span>Achievements</span>",
+        "ach-1-title": "1st Place English Contest",
+        "ach-1-desc": "School-level competition.",
+        "ach-2-desc": "Excellence in academic achievement.",
+        "hobbies-title": "My <span>Hobbies</span>",
+        "hobby-1-title": "Swimming",
+        "hobby-1-desc": "Maintaining body stamina.",
+        "hobby-2-desc": "Strategy & Refreshing.",
+        "hobby-3-desc": "Reflexes & Focus training.",
+        "hobby-4-desc": "Accuracy & Concentration.",
+        "contact-title": "Get In <span>Touch</span>",
+        "email-label": "Email (Click to copy)",
+        "wa-label": "WhatsApp (Click to copy)"
+    }
+};
+
+let currentLang = 'id';
+
+function setLanguage(lang) {
+    currentLang = lang;
+    const elements = document.querySelectorAll('[data-lang]');
+    elements.forEach(el => {
+        const key = el.getAttribute('data-lang');
+        if (translations[lang] && translations[lang][key]) {
+            el.innerHTML = translations[lang][key];
+        }
+    });
+
+    const switchToggle = document.getElementById('switch-toggle');
+    const idText = document.getElementById('lang-id-text');
+    const enText = document.getElementById('lang-en-text');
+
+    if (lang === 'en') {
+        switchToggle.classList.add('en');
+        enText.classList.add('active');
+        idText.classList.remove('active');
+    } else {
+        switchToggle.classList.remove('en');
+        idText.classList.add('active');
+        enText.classList.remove('active');
+    }
+}
+
+document.getElementById('lang-switcher').addEventListener('click', () => {
+    playSound(700, 'sine', 0.05);
+    const newLang = currentLang === 'id' ? 'en' : 'id';
+    setLanguage(newLang);
+});
+
+// Set default active indicator
+document.getElementById('lang-id-text').classList.add('active');
+
 // --- 1. SETUP THREE.JS SCENE ---
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
@@ -35,16 +143,16 @@ const matWire = new THREE.MeshBasicMaterial({
 const wireMesh = new THREE.Mesh(geoWire, matWire);
 scene.add(wireMesh);
 
-// C. Star Particles (Bintang)
+// C. Dynamic Interactive Star Particles
 const starGeo = new THREE.BufferGeometry();
-const starCount = 2000;
+const starCount = 2500;
 const starPos = new Float32Array(starCount * 3);
 for(let i=0; i<starCount*3; i++) {
     starPos[i] = (Math.random() - 0.5) * 200;
 }
 starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
 const starMat = new THREE.PointsMaterial({
-    color: 0xffffff, size: 0.15, transparent: true, opacity: 0.8
+    color: 0x00f2ff, size: 0.18, transparent: true, opacity: 0.7
 });
 const starMesh = new THREE.Points(starGeo, starMat);
 scene.add(starMesh);
@@ -70,7 +178,7 @@ document.addEventListener('mousemove', (e) => {
     mouseY = (e.clientY - window.innerHeight / 2);
 });
 
-// Raycaster untuk interaksi klik
+// Raycaster 3D Interaction
 const raycaster = new THREE.Raycaster();
 const mouseVector = new THREE.Vector2();
 
@@ -81,18 +189,19 @@ document.addEventListener('click', (e) => {
     const intersects = raycaster.intersectObjects([coreMesh]);
 
     if (intersects.length > 0) {
+        playSound(600, 'triangle', 0.2);
         gsap.to(coreMesh.rotation, {
             y: coreMesh.rotation.y + Math.PI,
-            duration: 1,
+            duration: 0.5,
             ease: "power3.out"
         });
         gsap.to(coreMesh.scale, {
-            x: 1.2, y: 1.2, z: 1.2,
-            duration: 0.2, yoyo: true, repeat: 1
+            x: 1.25, y: 1.25, z: 1.25,
+            duration: 0.15, yoyo: true, repeat: 1
         });
         const oldColor = pointLight1.color.getHex();
         pointLight1.color.setHex(0xff00ff);
-        setTimeout(() => pointLight1.color.setHex(oldColor), 300);
+        setTimeout(() => pointLight1.color.setHex(oldColor), 200);
     }
 });
 
@@ -109,13 +218,13 @@ function animate() {
     wireMesh.rotation.x -= 0.001;
     wireMesh.rotation.y -= 0.001;
 
-    targetX = mouseX * 0.0005;
-    targetY = mouseY * 0.0005;
+    targetX = mouseX * 0.0008;
+    targetY = mouseY * 0.0008;
     coreMesh.rotation.y += 0.1 * (targetX - coreMesh.rotation.y);
     coreMesh.rotation.x += 0.1 * (targetY - coreMesh.rotation.x);
 
-    starMesh.position.y = scrollY * 0.05; 
-    starMesh.rotation.z = scrollY * 0.0002;
+    starMesh.rotation.y = elapsedTime * 0.02 + (mouseX * 0.0001);
+    starMesh.rotation.x = (mouseY * 0.0001);
 
     let moveX = Math.max(-15, Math.min(0, -scrollY * 0.02)); 
     coreMesh.position.x = 5 + moveX;
@@ -133,39 +242,58 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// --- 6. UI ANIMATIONS (GSAP) - DIPERCEPAT ---
+// --- 6. UI ANIMATIONS (FAST LOADING) ---
 
 window.addEventListener('load', () => {
-    setTimeout(() => {
-        const loader = document.getElementById('loader');
-        loader.style.transform = "translateY(-100%)";
-        
-        // Animasi Intro Hero Section (Dibuat lebih cepat & jeda dipersingkat)
-        gsap.from(".glitch", { duration: 0.5, y: 30, opacity: 0, ease: "power2.out", delay: 0.2 });
-        gsap.from(".hero-subtitle", { duration: 0.5, y: 20, opacity: 0, ease: "power2.out", delay: 0.4 });
-        gsap.from(".btn-neon", { duration: 0.4, scale: 0.8, opacity: 0, ease: "back.out(1.5)", delay: 0.6 });
-    }, 400); // Waktu loading screen hilang dipercepat
+    const loader = document.getElementById('loader');
+    loader.style.transform = "translateY(-100%)";
+    
+    gsap.from(".glitch", { duration: 0.25, y: 15, opacity: 0, ease: "power2.out" });
+    gsap.from(".hero-subtitle", { duration: 0.25, y: 10, opacity: 0, ease: "power2.out", delay: 0.05 });
+    gsap.from(".btn-neon", { duration: 0.25, scale: 0.95, opacity: 0, ease: "back.out(1.5)", delay: 0.1 });
 });
 
-// Scroll Reveal Section (Animasi muncul elemen saat di-scroll dibuat jauh lebih cepat)
+// Scroll Reveal Section
 gsap.registerPlugin(ScrollTrigger);
 
 const revealElements = document.querySelectorAll('.reveal-up');
 revealElements.forEach(element => {
     gsap.fromTo(element, 
-        { y: 30, opacity: 0 },
+        { y: 15, opacity: 0 },
         {
             y: 0, 
             opacity: 1, 
-            duration: 0.4, // Dipercepat dari 1s menjadi 0.4s
+            duration: 0.25,
             ease: "power2.out",
             scrollTrigger: {
                 trigger: element,
-                start: "top 90%", // Muncul lebih awal ketika elemen mendekati layar
+                start: "top 95%",
                 toggleActions: "play none none reverse"
             }
         }
     );
+});
+
+// Smooth 3D Tilt Effect
+const tiltCards = document.querySelectorAll('.info-card');
+tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 30;
+        const rotateY = (centerX - x) / 30;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+    });
 });
 
 // Custom Cursor Logic
@@ -182,10 +310,107 @@ window.addEventListener('mousemove', (e) => {
     cursorOutline.animate({
         left: `${posX}px`,
         top: `${posY}px`
-    }, { duration: 250, fill: "forwards" });
+    }, { duration: 100, fill: "forwards" });
 });
 
-document.querySelectorAll('.hover-trigger').forEach(el => {
-    el.addEventListener('mouseenter', () => cursorOutline.classList.add('active'));
-    el.addEventListener('mouseleave', () => cursorOutline.classList.remove('active'));
+// Sound Effect Synthesizer
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(freq, type = 'sine', duration = 0.08) {
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+// Hover SFX & Cursor Trigger
+document.querySelectorAll('.hover-trigger, .btn-neon, .contact-box, .btn-project').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        cursorOutline.classList.add('active');
+        playSound(440, 'sine', 0.05);
+    });
+    el.addEventListener('mouseleave', () => {
+        cursorOutline.classList.remove('active');
+    });
+});
+
+// Click-to-Copy
+function copyToClipboard(text, message) {
+    playSound(880, 'triangle', 0.1);
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(message);
+    });
+}
+
+function showToast(message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerText = message;
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// Filter Kategori Skills
+function filterTech(category, event) {
+    playSound(520, 'sine', 0.08);
+    const items = document.querySelectorAll('.tech-item');
+    const buttons = document.querySelectorAll('.tab-btn');
+
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+            item.style.display = 'block';
+            gsap.fromTo(item, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.15 });
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+// --- BGM CONTROLLER LOGIC ---
+const bgmAudio = document.getElementById('bgm-audio');
+const bgmPlayBtn = document.getElementById('bgm-play-btn');
+const bgmMuteBtn = document.getElementById('bgm-mute-btn');
+
+let isPlaying = false;
+
+// Play / Pause Toggle
+bgmPlayBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        bgmAudio.pause();
+        bgmPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+        bgmPlayBtn.classList.remove('active');
+    } else {
+        bgmAudio.play();
+        bgmPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        bgmPlayBtn.classList.add('active');
+    }
+    isPlaying = !isPlaying;
+});
+
+// Mute / Unmute Toggle
+bgmMuteBtn.addEventListener('click', () => {
+    bgmAudio.muted = !bgmAudio.muted;
+    if (bgmAudio.muted) {
+        bgmMuteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
+        bgmMuteBtn.classList.add('active');
+    } else {
+        bgmMuteBtn.innerHTML = '<i class="fas fa-volume-high"></i>';
+        bgmMuteBtn.classList.remove('active');
+    }
 });

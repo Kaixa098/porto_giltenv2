@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portofolio Gilten Rexcia | Ultimate Edition</title>
+    <title>Portofolio Gilten Rexcia | Fullstack Web Developer</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
@@ -13,6 +13,34 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- Audio BGM Player Element -->
+    <audio id="bgm-audio" loop src="audio.mp3"></audio>
+
+    <!-- Floating BGM Controls with Label -->
+    <div id="bgm-controls">
+        <span class="bgm-label"><i class="fas fa-music"></i> CHILL SONG</span>
+        <div class="bgm-btn-group">
+            <button id="bgm-play-btn" class="bgm-btn hover-trigger" title="Play/Pause BGM">
+                <i class="fas fa-play"></i>
+            </button>
+            <button id="bgm-mute-btn" class="bgm-btn hover-trigger" title="Mute/Unmute BGM">
+                <i class="fas fa-volume-high"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Language Switcher -->
+    <div id="lang-switcher" class="hover-trigger">
+        <span class="lang-text" id="lang-id-text">ID</span>
+        <div class="switch-track" id="switch-toggle">
+            <div class="switch-thumb"></div>
+        </div>
+        <span class="lang-text" id="lang-en-text">EN</span>
+    </div>
 
     <!-- Loading Screen -->
     <div id="loader">
@@ -31,11 +59,12 @@
         <div class="container nav-content">
             <div class="logo">GIL<span style="color:var(--primary)">.</span>REX</div>
             <ul class="nav-links">
-                <li><a href="#home" class="hover-trigger">Home</a></li>
-                <li><a href="#about" class="hover-trigger">About</a></li>
-                <li><a href="#achievements" class="hover-trigger">Prestasi</a></li>
-                <li><a href="#hobbies" class="hover-trigger">Hobbies</a></li>
-                <li><a href="#contact" class="hover-trigger">Contact</a></li>
+                <li><a href="#home" class="hover-trigger" data-lang="nav-home">Home</a></li>
+                <li><a href="#about" class="hover-trigger" data-lang="nav-about">About</a></li>
+                <li><a href="#projects" class="hover-trigger" data-lang="nav-projects">Projects</a></li>
+                <li><a href="#achievements" class="hover-trigger" data-lang="nav-achievements">Prestasi</a></li>
+                <li><a href="#hobbies" class="hover-trigger" data-lang="nav-hobbies">Hobbies</a></li>
+                <li><a href="#contact" class="hover-trigger" data-lang="nav-contact">Contact</a></li>
             </ul>
         </div>
     </nav>
@@ -44,14 +73,14 @@
     <header id="home" class="hero">
         <div class="container">
             <div class="hero-content">
-                <h3 style="color: var(--primary); letter-spacing: 2px; margin-bottom: 10px;">HELLO WORLD, I AM</h3>
+                <h3 style="color: var(--primary); letter-spacing: 2px; margin-bottom: 10px;" data-lang="hero-tag">HELLO WORLD, I AM</h3>
                 <div class="glitch-wrapper">
                     <h1 class="glitch">GILTEN REXCIA</h1>
                 </div>
-                <div class="hero-subtitle">
-                    Frontend Developer & UI/UX Enthusiast. Student of the future
+                <div class="hero-subtitle" data-lang="hero-sub">
+                    Fullstack Web Developer (Frontend & Backend Enthusiast). Building modern & scalable web applications.
                 </div>
-                <a href="#achievements" class="btn-neon hover-trigger">Explore My Work</a>
+                <a href="#projects" class="btn-neon hover-trigger" data-lang="hero-btn">Explore My Work</a>
             </div>
         </div>
     </header>
@@ -60,37 +89,126 @@
         
         <!-- About Section -->
         <section id="about">
-            <h2 class="section-title reveal-up">About <span>Me</span></h2>
+            <h2 class="section-title reveal-up" data-lang="about-title">About <span>Me</span></h2>
             <div class="glass-card reveal-up">
-                <p>Halo! Nama saya <strong class="highlight">Gilten Rexcia</strong>. Saya adalah seorang siswa yang memiliki hasrat besar dalam dunia teknologi.</p>
-                <p>Saat ini saya berusia <strong>16 tahun</strong>, berjenis kelamin <strong>Laki-laki</strong>.</p>
-                <p>Saya percaya bahwa teknologi adalah kunci masa depan, oleh karena itu saya terus mengasah kemampuan saya dalam Frontend Development dan Desain UI/UX.</p>
+                <p data-lang="about-p1">Halo! Nama saya <strong class="highlight">Gilten Rexcia</strong>. Saya adalah seorang <strong class="highlight">Fullstack Web Developer</strong> yang memiliki passion mendalam dalam membangun aplikasi web utuh dari sisi Frontend hingga Backend.</p>
+                <p data-lang="about-p2">Saat ini saya berusia <strong>17 tahun</strong>, berjenis kelamin <strong>Laki-laki</strong>.</p>
+                <p data-lang="about-p3">Saya terbiasa merancang antarmuka yang modern, responsif, serta mengelola logika server dan basis data secara efisien.</p>
                 
                 <div style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
                     <h4 style="margin-bottom: 15px; color: #fff;">TECH ARSENAL</h4>
-                    <div class="grid-3">
-                        <div class="info-card hover-trigger" style="padding: 15px;"><i class="fab fa-html5"></i><h5>HTML5</h5></div>
-                        <div class="info-card hover-trigger" style="padding: 15px;"><i class="fab fa-css3-alt"></i><h5>CSS3</h5></div>
-                        <div class="info-card hover-trigger" style="padding: 15px;"><i class="fab fa-python"></i><h5>Python</h5></div>
+                    
+                    <!-- Filter Tabs -->
+                    <div class="filter-tabs">
+                        <button class="tab-btn active hover-trigger" onclick="filterTech('all', event)" data-lang="tech-all">All</button>
+                        <button class="tab-btn hover-trigger" onclick="filterTech('frontend', event)">Frontend</button>
+                        <button class="tab-btn hover-trigger" onclick="filterTech('backend', event)">Backend & Database</button>
+                    </div>
+
+                    <div class="grid-3" id="tech-grid">
+                        <!-- Frontend Stack -->
+                        <div class="info-card hover-trigger tech-item" data-category="frontend" style="padding: 15px;"><i class="fab fa-html5"></i><h5>HTML5</h5></div>
+                        <div class="info-card hover-trigger tech-item" data-category="frontend" style="padding: 15px;"><i class="fab fa-css3-alt"></i><h5>CSS3</h5></div>
+                        <div class="info-card hover-trigger tech-item" data-category="frontend" style="padding: 15px;"><i class="fab fa-js"></i><h5>JavaScript</h5></div>
+                        <div class="info-card hover-trigger tech-item" data-category="frontend" style="padding: 15px;"><i class="fa-solid fa-code"></i><h5>Tailwind CSS</h5></div>
+                        <div class="info-card hover-trigger tech-item" data-category="frontend" style="padding: 15px;"><i class="fab fa-bootstrap"></i><h5>Bootstrap</h5></div>
+                        
+                        <!-- Backend & Database Stack -->
+                        <div class="info-card hover-trigger tech-item" data-category="backend" style="padding: 15px;"><i class="fab fa-php"></i><h5>PHP</h5></div>
+                        <div class="info-card hover-trigger tech-item" data-category="backend" style="padding: 15px;"><i class="fab fa-laravel"></i><h5>Laravel</h5></div>
+                        <div class="info-card hover-trigger tech-item" data-category="backend" style="padding: 15px;"><i class="fab fa-node-js"></i><h5>Node.js</h5></div>
+                        <div class="info-card hover-trigger tech-item" data-category="backend" style="padding: 15px;"><i class="fas fa-database"></i><h5>MySQL</h5></div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Projects Section -->
+        <section id="projects">
+            <h2 class="section-title reveal-up" data-lang="projects-title">Featured <span>Projects</span></h2>
+            <div class="grid-3">
+                
+                <!-- Project Item 1 -->
+                <div class="info-card project-card reveal-up hover-trigger">
+                    <div class="card-img-container">
+                        <img src="https://picsum.photos/400/250?random=1" alt="Project Image" class="card-img">
+                    </div>
+                    <div class="project-info">
+                        <h3>Sistem Informasi / Web App</h3>
+                        <p data-lang="proj-1-desc">Aplikasi web interaktif dengan sistem autentikasi dan manajemen data real-time.</p>
+                        <div class="tech-tags">
+                            <span>Laravel</span>
+                            <span>Tailwind</span>
+                            <span>MySQL</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" target="_blank" class="btn-project hover-trigger" data-lang="btn-visit"><i class="fas fa-external-link-alt"></i> Visit Website</a>
+                            <a href="#" target="_blank" class="btn-project btn-outline hover-trigger"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Item 2 -->
+                <div class="info-card project-card reveal-up hover-trigger" style="transition-delay: 0.1s;">
+                    <div class="card-img-container">
+                        <img src="https://picsum.photos/400/250?random=2" alt="Project Image" class="card-img">
+                    </div>
+                    <div class="project-info">
+                        <h3>RESTful API Service</h3>
+                        <p data-lang="proj-2-desc">Backend API berkinerja tinggi untuk pengelolaan data terintegrasi database.</p>
+                        <div class="tech-tags">
+                            <span>Node.js</span>
+                            <span>Express</span>
+                            <span>MySQL</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" target="_blank" class="btn-project hover-trigger" data-lang="btn-visit"><i class="fas fa-external-link-alt"></i> Visit Website</a>
+                            <a href="#" target="_blank" class="btn-project btn-outline hover-trigger"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Item 3 -->
+                <div class="info-card project-card reveal-up hover-trigger" style="transition-delay: 0.2s;">
+                    <div class="card-img-container">
+                        <img src="https://picsum.photos/400/250?random=3" alt="Project Image" class="card-img">
+                    </div>
+                    <div class="project-info">
+                        <h3>Responsive Company Profile</h3>
+                        <p data-lang="proj-3-desc">Website profil perusahaan interaktif dengan tampilan modern dan animasi halus.</p>
+                        <div class="tech-tags">
+                            <span>HTML5</span>
+                            <span>CSS3</span>
+                            <span>JavaScript</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" target="_blank" class="btn-project hover-trigger" data-lang="btn-visit"><i class="fas fa-external-link-alt"></i> Visit Website</a>
+                            <a href="#" target="_blank" class="btn-project btn-outline hover-trigger"><i class="fab fa-github"></i> Code</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <!-- Achievements Section -->
         <section id="achievements">
-            <h2 class="section-title reveal-up">My <span>Achievements</span></h2>
+            <h2 class="section-title reveal-up" data-lang="achievements-title">My <span>Achievements</span></h2>
             <div class="grid-3">
-                <div class="info-card ach-card reveal-up">
-                    <i class="fas fa-trophy"></i>
-                    <h3>Juara 1 Bahasa Inggris</h3>
-                    <p style="font-size: 0.9rem; margin-top: 10px;">Kompetisi tingkat sekolah.</p>
+                <div class="info-card ach-card reveal-up hover-trigger">
+                    <div class="card-img-container">
+                        <img src="https://picsum.photos/400/250?random=4" alt="Sertifikat Juara 1 Bahasa Inggris" class="card-img">
+                    </div>
+                    <h3 data-lang="ach-1-title">Juara 1 Bahasa Inggris</h3>
+                    <p style="font-size: 0.9rem; margin-top: 10px;" data-lang="ach-1-desc">Kompetisi tingkat sekolah.</p>
                     <span class="date-badge">7 Desember 2024</span>
                 </div>
-                <div class="info-card ach-card reveal-up" style="transition-delay: 0.2s;">
-                    <i class="fas fa-medal"></i>
+                <div class="info-card ach-card reveal-up hover-trigger" style="transition-delay: 0.2s;">
+                    <div class="card-img-container">
+                        <img src="https://picsum.photos/400/250?random=5" alt="Sertifikat Gold Medalist" class="card-img">
+                    </div>
                     <h3>Gold Medalist</h3>
-                    <p style="font-size: 0.9rem; margin-top: 10px;">Prestasi akademik unggulan.</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;" data-lang="ach-2-desc">Prestasi akademik unggulan.</p>
                     <span class="date-badge">1 September 2024</span>
                 </div>
             </div>
@@ -98,52 +216,56 @@
 
         <!-- Hobbies Section -->
         <section id="hobbies">
-            <h2 class="section-title reveal-up">My <span>Hobbies</span></h2>
+            <h2 class="section-title reveal-up" data-lang="hobbies-title">My <span>Hobbies</span></h2>
             <div class="grid-3">
                 <div class="info-card reveal-up hover-trigger">
                     <i class="fas fa-swimmer"></i>
-                    <h3>Berenang</h3>
-                    <p>Menjaga stamina tubuh.</p>
+                    <h3 data-lang="hobby-1-title">Berenang</h3>
+                    <p data-lang="hobby-1-desc">Menjaga stamina tubuh.</p>
                 </div>
                 <div class="info-card reveal-up hover-trigger" style="transition-delay: 0.1s;">
                     <i class="fas fa-gamepad"></i>
                     <h3>Gaming</h3>
-                    <p>Strategi & Refreshing.</p>
+                    <p data-lang="hobby-2-desc">Strategi & Refreshing.</p>
                 </div>
                 <div class="info-card reveal-up hover-trigger" style="transition-delay: 0.2s;">
-                    <i class="fas fa-table-tennis"></i>
+                    <i class="fas fa-table-tennis-paddle-ball"></i>
                     <h3>Badminton</h3>
-                    <p>Melatih reflek & fokus.</p>
+                    <p data-lang="hobby-3-desc">Melatih reflek & fokus.</p>
+                </div>
+                <div class="info-card reveal-up hover-trigger" style="transition-delay: 0.3s;">
+                    <i class="fas fa-circle-dot"></i>
+                    <h3>Billiard</h3>
+                    <p data-lang="hobby-4-desc">Akurasi & Konsentrasi.</p>
                 </div>
             </div>
         </section>
 
         <!-- Contact Section -->
         <section id="contact">
-            <h2 class="section-title reveal-up">Get In <span>Touch</span></h2>
+            <h2 class="section-title reveal-up" data-lang="contact-title">Get In <span>Touch</span></h2>
             <div class="glass-card reveal-up">
                 <div class="grid-3" style="margin-bottom: 20px;">
-                    <a href="mailto:kaixareality@gmail.com" class="contact-box hover-trigger">
+                    <div class="contact-box hover-trigger" onclick="copyToClipboard('kaixareality@gmail.com', 'Email berhasil disalin!')">
                         <i class="fas fa-envelope"></i>
                         <div>
-                            <small style="color:#aaa">Email</small>
+                            <small style="color:#aaa" data-lang="email-label">Email (Klik untuk salin)</small>
                             <div style="font-weight: bold;">kaixareality@gmail.com</div>
                         </div>
-                    </a>
-                    <a href="tel:+6285811622218" class="contact-box hover-trigger">
+                    </div>
+                    <div class="contact-box hover-trigger" onclick="copyToClipboard('+6285811622218', 'Nomor WA berhasil disalin!')">
                         <i class="fas fa-phone"></i>
                         <div>
-                            <small style="color:#aaa">WhatsApp / Telp</small>
+                            <small style="color:#aaa" data-lang="wa-label">WhatsApp (Klik untuk salin)</small>
                             <div style="font-weight: bold;">+62 85811622218</div>
                         </div>
-                    </a>
+                    </div>
                 </div>
                 
                 <div class="social-btns">
-                    <a href="#" class="social-btn s-insta hover-trigger"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/kaixaa_kai/" class="social-btn s-insta hover-trigger"><i class="fab fa-instagram"></i></a>
                     <a href="https://wa.me/6285811622218" class="social-btn s-wa hover-trigger"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" class="social-btn s-tt hover-trigger"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" class="social-btn s-fb hover-trigger"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@kaixa.gilbert" class="social-btn s-tt hover-trigger"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
         </section>

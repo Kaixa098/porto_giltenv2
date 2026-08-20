@@ -28,6 +28,137 @@ body {
     line-height: 1.6;
 }
 
+/* --- FLOATING LANGUAGE SWITCHER --- */
+#lang-switcher {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(2, 2, 4, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 6px 14px;
+    border-radius: 30px;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+
+.lang-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #666;
+    transition: 0.3s;
+}
+
+.lang-text.active {
+    color: var(--primary);
+    text-shadow: 0 0 8px rgba(0, 242, 255, 0.6);
+}
+
+.switch-track {
+    width: 36px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    position: relative;
+    border: 1px solid var(--border);
+}
+
+.switch-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--primary);
+    border-radius: 50%;
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    box-shadow: 0 0 8px var(--primary);
+}
+
+.switch-track.en .switch-thumb {
+    transform: translateX(16px);
+}
+
+/* --- IMAGE CONTAINERS FOR PROJECTS & ACHIEVEMENTS --- */
+.card-img-container {
+    width: 100%;
+    height: 160px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    border: 1px solid var(--border);
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.info-card:hover .card-img {
+    transform: scale(1.05);
+}
+
+/* --- BGM PLAYER CONTROLS --- */
+#bgm-controls {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    background: rgba(2, 2, 4, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 10px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+
+.bgm-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.bgm-btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+.bgm-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.bgm-btn:hover {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+}
+
+.bgm-btn.active {
+    background: var(--primary);
+    color: #000;
+}
+
 /* --- LOADING SCREEN --- */
 #loader {
     position: fixed; 
@@ -59,7 +190,7 @@ body {
     100% { opacity: 1; } 
 }
 
-/* --- CUSTOM CURSOR --- */
+/* --- CUSTOM CURSOR GLOW --- */
 .cursor-dot, .cursor-outline {
     position: fixed; 
     top: 0; 
@@ -86,8 +217,9 @@ body {
 .cursor-outline.active {
     width: 50px; 
     height: 50px;
-    background: rgba(0, 242, 255, 0.1);
-    border-color: transparent;
+    background: rgba(0, 242, 255, 0.15);
+    border-color: var(--secondary);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
 }
 
 /* --- 3D CANVAS --- */
@@ -98,7 +230,7 @@ body {
     width: 100%; 
     height: 100%;
     z-index: -1; 
-    pointer-events: auto; /* Biarkan bisa klik 3D */
+    pointer-events: auto;
 }
 
 /* --- UI COMPONENTS --- */
@@ -184,7 +316,6 @@ nav {
     z-index: 2;
 }
 
-/* Glitch Effect Text */
 .glitch-wrapper { 
     position: relative; 
     display: inline-block; 
@@ -259,6 +390,7 @@ section {
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     margin: 0 auto; 
     max-width: 900px;
+    transition: border-color 0.3s;
 }
 
 .glass-card p { 
@@ -279,28 +411,105 @@ section {
     gap: 30px; 
 }
 
-/* Cards (Achievements/Hobbies) */
+/* Cards (Smooth 3D Tilt) */
 .info-card {
     background: rgba(255,255,255,0.02); 
     border: 1px solid var(--border);
     padding: 30px; 
     border-radius: 15px; 
     text-align: center;
-    transition: 0.4s; 
+    transition: transform 0.1s ease-out, border-color 0.3s, box-shadow 0.3s; 
     position: relative; 
     overflow: hidden;
+    transform-style: preserve-3d;
 }
 
 .info-card:hover {
-    transform: translateY(-10px);
     border-color: var(--primary);
-    box-shadow: 0 10px 30px rgba(0, 242, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 242, 255, 0.2);
 }
 
 .info-card i { 
     font-size: 2.5rem; 
     margin-bottom: 20px; 
     color: var(--primary); 
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+.info-card:hover i {
+    transform: translateZ(15px);
+}
+
+/* --- PROJECTS SECTION --- */
+.project-card {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 25px;
+}
+
+.project-info h3 {
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.project-info p {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.tech-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.tech-tags span {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--primary);
+}
+
+.project-links {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-project {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 6px;
+    background: var(--primary);
+    color: #000;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+}
+
+.btn-project:hover {
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+}
+
+.btn-outline {
+    background: transparent;
+    color: #fff;
+    border: 1px solid var(--border);
+}
+
+.btn-outline:hover {
+    border-color: #fff;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* Achievement Specifics */
@@ -311,7 +520,7 @@ section {
 
 .ach-card:hover { 
     border-color: var(--accent); 
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1); 
+    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2); 
 }
 
 .date-badge {
@@ -375,7 +584,64 @@ section {
 .s-insta:hover { background: #E1306C; }
 .s-wa:hover { background: #25D366; }
 .s-tt:hover { background: #000; color: white; border: 1px solid white; }
-.s-fb:hover { background: #4267B2; }
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: #aaa;
+    padding: 6px 16px;
+    border-radius: 20px;
+    transition: 0.3s;
+    font-size: 0.85rem;
+}
+
+.tab-btn:hover, .tab-btn.active {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+}
+
+/* Toast Notification */
+#toast-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100001;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: rgba(2, 2, 4, 0.9);
+    border: 1px solid var(--primary);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+    backdrop-filter: blur(10px);
+    font-size: 0.9rem;
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+}
+
+@keyframes toastIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toastOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
 
 /* Footer */
 footer { 
@@ -390,13 +656,7 @@ footer {
 /* Animation Classes */
 .reveal-up { 
     opacity: 0; 
-    transform: translateY(50px); 
-    transition: 1s all ease; 
-}
-
-.reveal-up.active { 
-    opacity: 1; 
-    transform: translateY(0); 
+    transform: translateY(30px); 
 }
 
 /* Responsive */
