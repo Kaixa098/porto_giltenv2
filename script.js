@@ -450,6 +450,10 @@ aiCloseBtn.addEventListener('click', () => {
     aiChatBox.classList.remove('active');
 });
 
+// Menyimpan riwayat percakapan (maks 10 turn terakhir) agar AI ingat konteks sebelumnya
+let aiChatHistory = [];
+const AI_MAX_HISTORY_TURNS = 10;
+
 async function handleSendAIMessage() {
     const text = aiUserInput.value.trim();
     if (!text) return;
@@ -464,7 +468,7 @@ async function handleSendAIMessage() {
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: text })
+            body: JSON.stringify({ prompt: text, history: aiChatHistory })
         });
 
         const data = await response.json();
@@ -476,6 +480,15 @@ async function handleSendAIMessage() {
 
         loadingMsg.innerText = data.reply;
         playSound(800, 'sine', 0.05);
+
+        // Simpan turn ini ke history untuk request berikutnya
+        aiChatHistory.push({ role: 'user', text: text });
+        aiChatHistory.push({ role: 'model', text: data.reply });
+
+        // Batasi panjang history biar payload tidak makin besar terus
+        if (aiChatHistory.length > AI_MAX_HISTORY_TURNS * 2) {
+            aiChatHistory = aiChatHistory.slice(-AI_MAX_HISTORY_TURNS * 2);
+        }
     } catch (err) {
         console.error("Error Fetch:", err);
         loadingMsg.innerText = "Maaf, terjadi masalah koneksi AI.";
