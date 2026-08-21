@@ -4,21 +4,23 @@ export default async function handler(req, res) {
     }
 
     const { prompt } = req.body;
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'API Key Groq belum dikonfigurasi di Vercel' });
+        return res.status(500).json({ error: 'API Key OpenRouter belum dikonfigurasi di Vercel' });
     }
 
     try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://porto-giltenv2.vercel.app',
+                'X-Title': 'Portfolio Rexcia AI'
             },
             body: JSON.stringify({
-                model: 'llama-3.1-8b-instant',
+                model: 'meta-llama/llama-3.2-11b-vision-instruct:free',
                 messages: [
                     {
                         role: 'system',
