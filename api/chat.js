@@ -75,9 +75,16 @@ export default async function handler(req, res) {
         parts: [{ text: prompt }]
     });
 
-    try {
+    // Urutan model: dicoba dari yang utama, lalu fallback kalau overload/gagal.
+    // Ganti/tambah sesuai model yang tersedia di akun Gemini kamu.
+    const MODEL_CHAIN = ['gemini-3.6-flash', 'gemini-3.5-flash-lite'];
+
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    // Panggil satu model, dengan retry singkat khusus untuk error "overload/high demand".
+    async function callModel(model, attempt = 1) {
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -93,36 +100,64 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
-        if (data.error) {
-            return res.status(400).json({ error: data.error.message });
+        // status 503 / pesan "overloaded" = server Google lagi padat, layak diretry
+        const isOverloaded =
+            response.status === 503 ||
+            (data.error && /overload|high demand|unavailable/i.test(data.error.message || ''));
+
+        if (isOverloaded && attempt < 2) {
+            await sleep(700 * attempt); // backoff singkat: 700ms lalu 1400ms
+            return callModel(model, attempt + 1);
         }
 
-        const candidate = data.candidates && data.candidates[0];
+        return { data, isOverloaded, httpStatus: response.status };
+    }
 
-        // Gemini bisa mem-block response karena filter safety, dsb.
-        if (!candidate) {
-            return res.status(200).json({
-                reply: 'Maaf, aku belum bisa menjawab pertanyaan itu. Coba tanyakan hal lain seputar Gilten ya!'
-            });
+    try {
+        let lastError = null;
+
+        for (const model of MODEL_CHAIN) {
+            const { data, isOverloaded } = await callModel(model);
+
+            if (data.error) {
+                lastError = data.error.message;
+                // Kalau overload, lanjut coba model berikutnya di chain.
+                // Kalau error lain (bukan overload), langsung berhenti & lapor ke user.
+                if (isOverloaded) continue;
+                return res.status(400).json({ error: data.error.message });
+            }
+
+            const candidate = data.candidates && data.candidates[0];
+
+            if (!candidate) {
+                return res.status(200).json({
+                    reply: 'Maaf, aku belum bisa menjawab pertanyaan itu. Coba tanyakan hal lain seputar Gilten ya!'
+                });
+            }
+
+            if (candidate.finishReason === 'SAFETY') {
+                return res.status(200).json({
+                    reply: 'Maaf, pertanyaan itu tidak bisa aku jawab. Yuk tanya seputar profil atau proyek Gilten saja ya!'
+                });
+            }
+
+            const botReply = candidate.content && candidate.content.parts && candidate.content.parts[0]
+                ? candidate.content.parts[0].text
+                : null;
+
+            if (!botReply) {
+                return res.status(200).json({
+                    reply: 'Maaf, terjadi kendala saat memproses jawaban. Coba tanya lagi ya!'
+                });
+            }
+
+            return res.status(200).json({ reply: botReply });
         }
 
-        if (candidate.finishReason === 'SAFETY') {
-            return res.status(200).json({
-                reply: 'Maaf, pertanyaan itu tidak bisa aku jawab. Yuk tanya seputar profil atau proyek Gilten saja ya!'
-            });
-        }
-
-        const botReply = candidate.content && candidate.content.parts && candidate.content.parts[0]
-            ? candidate.content.parts[0].text
-            : null;
-
-        if (!botReply) {
-            return res.status(200).json({
-                reply: 'Maaf, terjadi kendala saat memproses jawaban. Coba tanya lagi ya!'
-            });
-        }
-
-        return res.status(200).json({ reply: botReply });
+        // Semua model di chain gagal karena overload
+        return res.status(200).json({
+            reply: 'Server AI sedang sangat sibuk saat ini. Coba tanya lagi sebentar lagi ya! 🙏'
+        });
 
     } catch (err) {
         return res.status(500).json({ error: 'Terjadi kesalahan server backend: ' + err.message });
