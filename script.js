@@ -382,29 +382,64 @@ function filterTech(category, event) {
     });
 }
 
-// --- BGM CONTROLLER LOGIC ---
+// --- BGM CONTROLLER LOGIC (AUTO-START ON FIRST INTERACTION) ---
 const bgmAudio = document.getElementById('bgm-audio');
 const bgmPlayBtn = document.getElementById('bgm-play-btn');
 const bgmMuteBtn = document.getElementById('bgm-mute-btn');
 
 let isPlaying = false;
 
-// Play / Pause Toggle
-bgmPlayBtn.addEventListener('click', () => {
+function startBGM() {
+    if (!isPlaying) {
+        bgmAudio.play().then(() => {
+            isPlaying = true;
+            bgmPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            bgmPlayBtn.classList.add('active');
+            removeAutoPlayListeners();
+        }).catch(err => {
+            console.log("Autoplay terhalang kebijakan browser, menunggu interaksi user:", err);
+        });
+    }
+}
+
+// Jalankan auto-play saat pertama masuk
+startBGM();
+
+function handleFirstInteraction() {
+    startBGM();
+}
+
+function removeAutoPlayListeners() {
+    window.removeEventListener('click', handleFirstInteraction);
+    window.removeEventListener('scroll', handleFirstInteraction);
+    window.removeEventListener('mousemove', handleFirstInteraction);
+    window.removeEventListener('keydown', handleFirstInteraction);
+}
+
+window.addEventListener('click', handleFirstInteraction);
+window.addEventListener('scroll', handleFirstInteraction);
+window.addEventListener('mousemove', handleFirstInteraction);
+window.addEventListener('keydown', handleFirstInteraction);
+
+// Play / Pause Toggle Manual
+bgmPlayBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (isPlaying) {
         bgmAudio.pause();
         bgmPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
         bgmPlayBtn.classList.remove('active');
+        isPlaying = false;
     } else {
         bgmAudio.play();
         bgmPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
         bgmPlayBtn.classList.add('active');
+        isPlaying = true;
     }
-    isPlaying = !isPlaying;
 });
 
-// Mute / Unmute Toggle
-bgmMuteBtn.addEventListener('click', () => {
+// Mute / Unmute Toggle Manual
+bgmMuteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     bgmAudio.muted = !bgmAudio.muted;
     if (bgmAudio.muted) {
         bgmMuteBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>';
