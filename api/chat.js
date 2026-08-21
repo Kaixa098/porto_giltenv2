@@ -4,14 +4,21 @@ export default async function handler(req, res) {
     }
 
     const { prompt } = req.body;
+    const apiKey = process.env.GROQ_API_KEY;
+
+    if (!apiKey) {
+        return res.status(500).json({ error: 'API Key Groq belum dikonfigurasi di Vercel' });
+    }
 
     try {
-        const response = await fetch('https://text.pollinations.ai/', {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                model: 'llama-3.1-8b-instant',
                 messages: [
                     {
                         role: 'system',
@@ -21,14 +28,19 @@ export default async function handler(req, res) {
                         role: 'user',
                         content: prompt
                     }
-                ],
-                model: 'openai'
+                ]
             })
         });
 
-        const botReply = await response.text();
+        const data = await response.json();
+
+        if (data.error) {
+            return res.status(400).json({ error: data.error.message });
+        }
+
+        const botReply = data.choices[0].message.content;
         return res.status(200).json({ reply: botReply });
     } catch (err) {
-        return res.status(500).json({ error: 'Terjadi kesalahan server backend: ' + err.message });
+        return res.status(500).json({ error: 'Terjadi kesalahan server backend' });
     }
 }
