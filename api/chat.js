@@ -20,7 +20,11 @@ export default async function handler(req, res) {
                 'X-Title': 'Portfolio Rexcia AI'
             },
             body: JSON.stringify({
-                model: 'mistralai/mistral-7b-instruct:free',
+                models: [
+                    'qwen/qwen-2.5-7b-instruct:free',
+                    'mistralai/mistral-7b-instruct:free',
+                    'meta-llama/llama-3.1-8b-instruct:free'
+                ],
                 messages: [
                     {
                         role: 'system',
