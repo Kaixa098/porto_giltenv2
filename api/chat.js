@@ -4,27 +4,21 @@ export default async function handler(req, res) {
     }
 
     const { prompt } = req.body;
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const apiKey = process.env.HF_TOKEN;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'API Key OpenRouter belum dikonfigurasi di Vercel' });
+        return res.status(500).json({ error: 'HF_TOKEN belum dikonfigurasi di Vercel' });
     }
 
     try {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const response = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-Coder-32B-Instruct/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://porto-giltenv2.vercel.app',
-                'X-Title': 'Portfolio Rexcia AI'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                models: [
-                    'qwen/qwen-2.5-7b-instruct:free',
-                    'mistralai/mistral-7b-instruct:free',
-                    'meta-llama/llama-3.1-8b-instruct:free'
-                ],
+                model: 'Qwen/Qwen2.5-Coder-32B-Instruct',
                 messages: [
                     {
                         role: 'system',
@@ -34,14 +28,15 @@ export default async function handler(req, res) {
                         role: 'user',
                         content: prompt
                     }
-                ]
+                ],
+                max_tokens: 500
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            return res.status(400).json({ error: data.error.message });
+            return res.status(400).json({ error: typeof data.error === 'string' ? data.error : data.error.message });
         }
 
         const botReply = data.choices[0].message.content;
