@@ -42,6 +42,30 @@
         <span class="lang-text" id="lang-en-text">EN</span>
     </div>
 
+    <!-- Floating AI Assistant Widget -->
+    <div id="ai-widget">
+        <button id="ai-toggle-btn" class="hover-trigger" title="Chat dengan AI Assistant">
+            <i class="fas fa-robot"></i>
+        </button>
+        
+        <div id="ai-chat-box" class="glass-card">
+            <div class="ai-chat-header">
+                <div class="ai-status">
+                    <i class="fas fa-brain"></i>
+                    <span>Rexcia AI Assistant</span>
+                </div>
+                <button id="ai-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="ai-chat-messages">
+                <div class="ai-msg bot">Halo! Saya AI Assistant Gilten. Ada yang ingin kamu tanyakan tentang pengalaman, proyek, atau keahlian Gilten?</div>
+            </div>
+            <div class="ai-chat-input-area">
+                <input type="text" id="ai-user-input" placeholder="Tanyakan sesuatu..." />
+                <button id="ai-send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Screen -->
     <div id="loader">
         <div class="loader-text">INITIALIZING SYSTEM...</div>

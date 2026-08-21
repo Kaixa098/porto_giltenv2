@@ -103,7 +103,6 @@ document.getElementById('lang-switcher').addEventListener('click', () => {
     setLanguage(newLang);
 });
 
-// Set default active indicator
 document.getElementById('lang-id-text').classList.add('active');
 
 // --- 1. SETUP THREE.JS SCENE ---
@@ -121,7 +120,6 @@ container.appendChild(renderer.domElement);
 
 // --- 2. CREATE OBJECTS ---
 
-// A. The Core (Torus Knot)
 const geometryCore = new THREE.TorusKnotGeometry(6, 1.8, 150, 20);
 const materialCore = new THREE.MeshStandardMaterial({ 
     color: 0x111111, 
@@ -132,7 +130,6 @@ const materialCore = new THREE.MeshStandardMaterial({
 const coreMesh = new THREE.Mesh(geometryCore, materialCore);
 scene.add(coreMesh);
 
-// B. Wireframe Overlay (Icosahedron)
 const geoWire = new THREE.IcosahedronGeometry(12, 1);
 const matWire = new THREE.MeshBasicMaterial({ 
     color: 0x00f2ff, 
@@ -143,7 +140,6 @@ const matWire = new THREE.MeshBasicMaterial({
 const wireMesh = new THREE.Mesh(geoWire, matWire);
 scene.add(wireMesh);
 
-// C. Dynamic Interactive Star Particles
 const starGeo = new THREE.BufferGeometry();
 const starCount = 2500;
 const starPos = new Float32Array(starCount * 3);
@@ -178,7 +174,6 @@ document.addEventListener('mousemove', (e) => {
     mouseY = (e.clientY - window.innerHeight / 2);
 });
 
-// Raycaster 3D Interaction
 const raycaster = new THREE.Raycaster();
 const mouseVector = new THREE.Vector2();
 
@@ -242,7 +237,7 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// --- 6. UI ANIMATIONS (FAST LOADING) ---
+// --- 6. UI ANIMATIONS ---
 
 window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
@@ -253,7 +248,6 @@ window.addEventListener('load', () => {
     gsap.from(".btn-neon", { duration: 0.25, scale: 0.95, opacity: 0, ease: "back.out(1.5)", delay: 0.1 });
 });
 
-// Scroll Reveal Section
 gsap.registerPlugin(ScrollTrigger);
 
 const revealElements = document.querySelectorAll('.reveal-up');
@@ -274,7 +268,6 @@ revealElements.forEach(element => {
     );
 });
 
-// Smooth 3D Tilt Effect
 const tiltCards = document.querySelectorAll('.info-card');
 tiltCards.forEach(card => {
     card.addEventListener('mousemove', (e) => {
@@ -296,7 +289,6 @@ tiltCards.forEach(card => {
     });
 });
 
-// Custom Cursor Logic
 const cursorDot = document.querySelector('.cursor-dot');
 const cursorOutline = document.querySelector('.cursor-outline');
 
@@ -313,7 +305,6 @@ window.addEventListener('mousemove', (e) => {
     }, { duration: 100, fill: "forwards" });
 });
 
-// Sound Effect Synthesizer
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playSound(freq, type = 'sine', duration = 0.08) {
@@ -332,7 +323,6 @@ function playSound(freq, type = 'sine', duration = 0.08) {
     osc.stop(audioCtx.currentTime + duration);
 }
 
-// Hover SFX & Cursor Trigger
 document.querySelectorAll('.hover-trigger, .btn-neon, .contact-box, .btn-project').forEach(el => {
     el.addEventListener('mouseenter', () => {
         cursorOutline.classList.add('active');
@@ -343,7 +333,6 @@ document.querySelectorAll('.hover-trigger, .btn-neon, .contact-box, .btn-project
     });
 });
 
-// Click-to-Copy
 function copyToClipboard(text, message) {
     playSound(880, 'triangle', 0.1);
     navigator.clipboard.writeText(text).then(() => {
@@ -363,7 +352,6 @@ function showToast(message) {
     }, 3000);
 }
 
-// Filter Kategori Skills
 function filterTech(category, event) {
     playSound(520, 'sine', 0.08);
     const items = document.querySelectorAll('.tech-item');
@@ -382,7 +370,7 @@ function filterTech(category, event) {
     });
 }
 
-// --- BGM CONTROLLER LOGIC (AUTO-START ON FIRST INTERACTION) ---
+// --- BGM CONTROLLER LOGIC ---
 const bgmAudio = document.getElementById('bgm-audio');
 const bgmPlayBtn = document.getElementById('bgm-play-btn');
 const bgmMuteBtn = document.getElementById('bgm-mute-btn');
@@ -402,7 +390,6 @@ function startBGM() {
     }
 }
 
-// Jalankan auto-play saat pertama masuk
 startBGM();
 
 function handleFirstInteraction() {
@@ -421,7 +408,6 @@ window.addEventListener('scroll', handleFirstInteraction);
 window.addEventListener('mousemove', handleFirstInteraction);
 window.addEventListener('keydown', handleFirstInteraction);
 
-// Play / Pause Toggle Manual
 bgmPlayBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     if (isPlaying) {
@@ -437,7 +423,6 @@ bgmPlayBtn.addEventListener('click', (e) => {
     }
 });
 
-// Mute / Unmute Toggle Manual
 bgmMuteBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     bgmAudio.muted = !bgmAudio.muted;
@@ -448,4 +433,70 @@ bgmMuteBtn.addEventListener('click', (e) => {
         bgmMuteBtn.innerHTML = '<i class="fas fa-volume-high"></i>';
         bgmMuteBtn.classList.remove('active');
     }
+});
+
+// --- AI CHATBOT ASSISTANT LOGIC ---
+const GEMINI_API_KEY = ""; 
+
+const aiToggleBtn = document.getElementById('ai-toggle-btn');
+const aiCloseBtn = document.getElementById('ai-close-btn');
+const aiChatBox = document.getElementById('ai-chat-box');
+const aiSendBtn = document.getElementById('ai-send-btn');
+const aiUserInput = document.getElementById('ai-user-input');
+const aiMessagesContainer = document.getElementById('ai-chat-messages');
+
+aiToggleBtn.addEventListener('click', () => {
+    playSound(600, 'sine', 0.05);
+    aiChatBox.classList.toggle('active');
+});
+
+aiCloseBtn.addEventListener('click', () => {
+    aiChatBox.classList.remove('active');
+});
+
+async function handleSendAIMessage() {
+    const text = aiUserInput.value.trim();
+    if (!text) return;
+
+    appendMessage(text, 'user');
+    aiUserInput.value = '';
+    playSound(500, 'sine', 0.05);
+
+    const loadingMsg = appendMessage("Sedang berpikir...", 'bot');
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `Kamu adalah Rexcia AI Assistant untuk portofolio Gilten Rexcia, seorang Fullstack Web Developer berusia 17 tahun. Jawab pertanyaan pengunjung secara ramah, singkat, dan profesional berbasis profil Gilten. Pertanyaan pengunjung: ${text}`
+                    }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        const botReply = data.candidates[0].content.parts[0].text;
+        
+        loadingMsg.innerText = botReply;
+        playSound(800, 'sine', 0.05);
+    } catch (err) {
+        loadingMsg.innerText = "Maaf, terjadi masalah koneksi AI.";
+    }
+}
+
+function appendMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `ai-msg ${sender}`;
+    msgDiv.innerText = text;
+    aiMessagesContainer.appendChild(msgDiv);
+    aiMessagesContainer.scrollTop = aiMessagesContainer.scrollHeight;
+    return msgDiv;
+}
+
+aiSendBtn.addEventListener('click', handleSendAIMessage);
+aiUserInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleSendAIMessage();
 });
