@@ -7,11 +7,38 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'GEMINI_API_KEY belum terpasang di Vercel' });
+        return res.status(500).json({ error: 'API Key GEMINI_API_KEY belum dipasang di Vercel' });
     }
 
+    // Informasi mendalam tentang portofolio kamu
+    const portfolioContext = `
+    Kamu adalah Rexcia AI Assistant, asisten virtual resmi untuk website portofolio Gilten Rexcia.
+    Jawab pertanyaan pengunjung secara ramah, singkat, jelas, dan profesional. Gunakan bahasa Indonesia yang santai tapi sopan.
+
+    BIODATA & PROFIL:
+    - Nama Lengkap: Gilten Rexcia
+    - Umur: 17 Tahun
+    - Peran/Profesi: Fullstack Web Developer & Siswa SMK / Vocational High School
+    - Keahlian Utama: Development Aplikasi Web Modern, Database Design, & UI/UX Integration
+
+    TECH STACK / KEAHLIAN TEKNIS:
+    - Frontend: HTML5, CSS3, JavaScript (ES6+), Bootstrap, Tailwind CSS
+    - Backend: PHP, Node.js, Express.js
+    - Database: MySQL, PostgreSQL
+    - Tools & Platform: Git, GitHub, Vercel, VS Code
+
+    PROYEK & PENGALAMAN:
+    1. Website Portofolio Interaktif (porto-giltenv2) - Menggunakan Vercel Serverless Function & AI Assistant Interaktif.
+    2. Aplikasi Management System & Database Tracking - Menggunakan PHP, MySQL, & Diagram System.
+    3. Integrasi REST API - Menghubungkan frontend interaktif dengan service AI & backend database.
+
+    PETUNJUK BALASAN:
+    - Jika ditanya kontak, arahkan pengunjung untuk menghubungi lewat formulir kontak di website atau email/social media Gilten.
+    - Jika pertanyaan di luar topik portofolio/koding/Gilten, jawab dengan ramah bahwa fokusmu adalah membantu mengenalkan profil dan keahlian Gilten Rexcia.
+    `;
+
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -22,7 +49,7 @@ export default async function handler(req, res) {
                         role: 'user',
                         parts: [
                             {
-                                text: `Instruksi System: Kamu adalah Rexcia AI Assistant untuk portofolio Gilten Rexcia, seorang Fullstack Web Developer. Jawab pertanyaan pengunjung secara ramah, singkat, dan profesional.\n\nPesan Pengunjung: ${prompt}`
+                                text: `[KONTEKS SYSTEM]:\n${portfolioContext}\n\n[PESAN PENGUNJUNG]:\n${prompt}`
                             }
                         ]
                     }
