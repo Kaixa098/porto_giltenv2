@@ -119,7 +119,6 @@ renderer.setPixelRatio(window.devicePixelRatio);
 container.appendChild(renderer.domElement);
 
 // --- 2. CREATE OBJECTS ---
-
 const geometryCore = new THREE.TorusKnotGeometry(6, 1.8, 150, 20);
 const materialCore = new THREE.MeshStandardMaterial({ 
     color: 0x111111, 
@@ -238,7 +237,6 @@ window.addEventListener('resize', () => {
 });
 
 // --- 6. UI ANIMATIONS ---
-
 window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
     loader.style.transform = "translateY(-100%)";
@@ -435,9 +433,7 @@ bgmMuteBtn.addEventListener('click', (e) => {
     }
 });
 
-// --- AI CHATBOT ASSISTANT LOGIC ---
-const GEMINI_API_KEY = ""; 
-
+// --- AI CHATBOT ASSISTANT LOGIC (PANGGIL VERCEL SERVERLESS FUNCTION) ---
 const aiToggleBtn = document.getElementById('ai-toggle-btn');
 const aiCloseBtn = document.getElementById('ai-close-btn');
 const aiChatBox = document.getElementById('ai-chat-box');
@@ -465,24 +461,23 @@ async function handleSendAIMessage() {
     const loadingMsg = appendMessage("Sedang berpikir...", 'bot');
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `Kamu adalah Rexcia AI Assistant untuk portofolio Gilten Rexcia, seorang Fullstack Web Developer berusia 17 tahun. Jawab pertanyaan pengunjung secara ramah, singkat, dan profesional berbasis profil Gilten. Pertanyaan pengunjung: ${text}`
-                    }]
-                }]
-            })
+            body: JSON.stringify({ prompt: text })
         });
 
         const data = await response.json();
-        const botReply = data.candidates[0].content.parts[0].text;
-        
-        loadingMsg.innerText = botReply;
+
+        if (data.error) {
+            loadingMsg.innerText = `Error: ${data.error}`;
+            return;
+        }
+
+        loadingMsg.innerText = data.reply;
         playSound(800, 'sine', 0.05);
     } catch (err) {
+        console.error("Error Fetch:", err);
         loadingMsg.innerText = "Maaf, terjadi masalah koneksi AI.";
     }
 }
