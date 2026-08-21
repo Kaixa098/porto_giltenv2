@@ -4,21 +4,14 @@ export default async function handler(req, res) {
     }
 
     const { prompt } = req.body;
-    const apiKey = process.env.HF_TOKEN;
-
-    if (!apiKey) {
-        return res.status(500).json({ error: 'HF_TOKEN belum dikonfigurasi di Vercel' });
-    }
 
     try {
-        const response = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-Coder-32B-Instruct/v1/chat/completions', {
+        const response = await fetch('https://text.pollinations.ai/', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'Qwen/Qwen2.5-Coder-32B-Instruct',
                 messages: [
                     {
                         role: 'system',
@@ -29,19 +22,13 @@ export default async function handler(req, res) {
                         content: prompt
                     }
                 ],
-                max_tokens: 500
+                model: 'openai'
             })
         });
 
-        const data = await response.json();
-
-        if (data.error) {
-            return res.status(400).json({ error: typeof data.error === 'string' ? data.error : data.error.message });
-        }
-
-        const botReply = data.choices[0].message.content;
+        const botReply = await response.text();
         return res.status(200).json({ reply: botReply });
     } catch (err) {
-        return res.status(500).json({ error: 'Terjadi kesalahan server backend' });
+        return res.status(500).json({ error: 'Terjadi kesalahan server backend: ' + err.message });
     }
 }
