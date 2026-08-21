@@ -4,23 +4,31 @@ export default async function handler(req, res) {
     }
 
     const { prompt } = req.body;
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'API Key belum dikonfigurasi di Vercel' });
+        return res.status(500).json({ error: 'API Key Groq belum dikonfigurasi di Vercel' });
     }
 
     try {
-        // Tembak langsung ke model gemini-2.5-flash
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `Kamu adalah Rexcia AI Assistant untuk portofolio Gilten Rexcia, seorang Fullstack Web Developer berusia 17 tahun. Jawab pertanyaan pengunjung secara ramah, singkat, dan profesional berbasis profil Gilten. Pertanyaan pengunjung: ${prompt}`
-                    }]
-                }]
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'Kamu adalah Rexcia AI Assistant untuk portofolio Gilten Rexcia, seorang Fullstack Web Developer. Jawab pertanyaan pengunjung secara ramah, singkat, dan profesional.'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ]
             })
         });
 
@@ -30,7 +38,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: data.error.message });
         }
 
-        const botReply = data.candidates[0].content.parts[0].text;
+        const botReply = data.choices[0].message.content;
         return res.status(200).json({ reply: botReply });
     } catch (err) {
         return res.status(500).json({ error: 'Terjadi kesalahan server backend' });
